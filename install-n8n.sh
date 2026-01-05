@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 # Скрипт для развертывания n8n на Ubuntu 24.04 VPS c PostgreSQL, Traefik, UFW и Fail2Ban
@@ -26,7 +27,6 @@ print_header() {
     echo -e "${BLUE}$1${NC}"
     echo -e "${BLUE}================================${NC}"
 }
-
 print_success() { echo -e "${GREEN}✓ $1${NC}"; }
 print_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
 print_error()   { echo -e "${RED}✗ $1${NC}"; }
@@ -108,8 +108,18 @@ configure_ssh_port() {
     else
         print_info "Порт SSH уже установлен на 2222"
     fi
-    systemctl reload sshd || systemctl restart sshd
-    print_success "SSHD перезапущен на порту 2222"
+    # Перезагрузка службы SSH (учет имен ssh/sshd)
+    if systemctl reload ssh 2>/dev/null; then
+        print_success "SSH перезагружен (ssh)"
+    elif systemctl reload sshd 2>/dev/null; then
+        print_success "SSH перезагружен (sshd)"
+    elif systemctl restart ssh 2>/dev/null; then
+        print_success "SSH перезапущен (ssh)"
+    elif systemctl restart sshd 2>/dev/null; then
+        print_success "SSH перезапущен (sshd)"
+    else
+        print_warning "Не удалось автоматически перезапустить ssh/sshd. Сделайте это вручную: systemctl restart ssh"
+    fi
     print_warning "Не закрывайте текущую сессию, пока не убедитесь, что вход по порту 2222 работает."
 }
 
@@ -139,9 +149,9 @@ maxretry = 5
 backend  = systemd
 
 [sshd]
-enabled = true
-port    = 2222
-logpath = %(sshd_log)s
+enabled  = true
+port     = 2222
+logpath  = %(sshd_log)s
 maxretry = 5
 
 [postgresql]
@@ -151,7 +161,6 @@ filter   = postgresql
 logpath  = /var/log/postgresql/postgresql-*.log
 maxretry = 5
 EOF
-
     systemctl enable fail2ban
     systemctl restart fail2ban
     print_success "Fail2Ban настроен (порты 2222 и 5670)"
@@ -495,7 +504,7 @@ case "${1:-}" in
         exit 0
         ;;
     --version|-v)
-        echo "n8n Installation Script v1.1.0 (Ubuntu 24.04 only, PostgreSQL)"
+        echo "n8n Installation Script v1.1.1 (Ubuntu 24.04 only, PostgreSQL)"
         exit 0
         ;;
     --update)
@@ -575,3 +584,4 @@ case "${1:-}" in
         main
         ;;
 esac
+```
