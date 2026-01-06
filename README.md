@@ -1,6 +1,9 @@
 wget https://raw.githubusercontent.com/RyabkovAleksandr/install-n8n-PostgreSQL-Firewall/main/install-n8n.sh
+
 sed -i 's/\r$//g' install-n8n.sh
+
 bash install-n8n.sh
+
 sudo bash install-n8n.sh --update
 
 
