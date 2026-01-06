@@ -8,10 +8,13 @@ sudo bash install-n8n.sh --update
 
 
 #Защита от подбора паролей (Fail2Ban)
+
 sudo apt install fail2ban -y
 #автозапуск
+
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
+
 #проверка В поле Active должно появиться зеленое active (running).
 sudo systemctl status fail2ban
 #В строке Banned IP list вы увидите список тех, кто заблокирован прямо сейчас.
