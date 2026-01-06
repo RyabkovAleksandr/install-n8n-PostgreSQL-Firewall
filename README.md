@@ -32,4 +32,5 @@ sudo docker image prune -f
 #На Ubuntu часто остаются скачанные пакеты, которые больше не нужны. Это освободит около 200-500 МБ:
 
 sudo apt-get clean
+
 sudo apt-get autoremove -y
